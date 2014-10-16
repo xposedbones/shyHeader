@@ -38,6 +38,7 @@
             ease: Quint.easeOut
           });
         }
+        el.removeClass("shy-visible");
         el.addClass("shy-hidden");
         return isHidden = true;
       } else {
@@ -53,6 +54,7 @@
           });
         }
         isHidden = false;
+        el.removeClass("shy-hidden");
         el.addClass("shy-visible");
       }
       return currentOffset = _st;

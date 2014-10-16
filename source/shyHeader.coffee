@@ -43,6 +43,7 @@
 						}
 					)
 
+				el.removeClass "shy-visible"
 				el.addClass "shy-hidden"
 				isHidden = true
 			else
@@ -61,5 +62,6 @@
 						}
 					)
 				isHidden = false
+				el.removeClass "shy-hidden"
 				el.addClass "shy-visible"
 			currentOffset = _st
