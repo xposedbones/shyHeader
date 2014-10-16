@@ -4,8 +4,8 @@
 			distanceBeforeHide: 250
 			distanceBeforeShow: 0
 			elemToHide: @
-			visiblePos: 32
-			hiddenPos: -5
+			visiblePos: 0
+			hiddenPos: -@outerHeight()
 			duration: 0.3
 			visibleClass: "visible"
 			hiddenClass: "hidden"
@@ -13,6 +13,7 @@
 
 
 		options = $.extend defaults,options
+		console.log options['hiddenPos'];
 		startingPos = options['elemToHide'].offset().top
 		currentOffset = 0
 		lastScrollPos = 0
@@ -22,43 +23,43 @@
 			_scrollTop = $(window).scrollTop();
 
 			if _scrollTop > lastScrollPos
-				downHandler(_scrollTop)
+				downHandler(_scrollTop, options['elemToHide'])
 
 			else
-				upHandler(_scrollTop)
+				upHandler(_scrollTop, options['elemToHide'])
 
 			lastScrollPos = _scrollTop
 
-		downHandler = (_st) ->
+		downHandler = (_st,el) ->
 			
 			if (_st >= currentOffset + options['distanceBeforeHide']) && !isHidden
-				if useJS
+				if options['useJS']
 					TweenLite.to(
 						options['elemToHide']
 						options['duration']
 						{
 							top: options['hiddenPos']
-							easing: Quint.easeOut
+							ease: Quint.easeOut
 						}
 					)
 
-				@addClass "hidden"
+				el.addClass "shy-hidden"
 				isHidden = true
 			else
 				return 
 
-		upHandler = (_st) ->
+		upHandler = (_st,el) ->
 			
 			if isHidden
-				if useJS
+				if options['useJS']
 					TweenLite.to(
 						options['elemToHide']
 						options['duration']
 						{
 							top: options['visiblePos']
-							easing: Quint.easeOut
+							ease: Quint.easeOut
 						}
 					)
 				isHidden = false
-				@addClass "visible"
+				el.addClass "shy-visible"
 			currentOffset = _st

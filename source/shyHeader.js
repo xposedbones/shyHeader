@@ -7,14 +7,15 @@
       distanceBeforeHide: 250,
       distanceBeforeShow: 0,
       elemToHide: this,
-      visiblePos: 32,
-      hiddenPos: -5,
+      visiblePos: 0,
+      hiddenPos: -this.outerHeight(),
       duration: 0.3,
       visibleClass: "visible",
       hiddenClass: "hidden",
       useJS: true
     };
     options = $.extend(defaults, options);
+    console.log(options['hiddenPos']);
     startingPos = options['elemToHide'].offset().top;
     currentOffset = 0;
     lastScrollPos = 0;
@@ -23,36 +24,36 @@
       var _scrollTop;
       _scrollTop = $(window).scrollTop();
       if (_scrollTop > lastScrollPos) {
-        downHandler(_scrollTop);
+        downHandler(_scrollTop, options['elemToHide']);
       } else {
-        upHandler(_scrollTop);
+        upHandler(_scrollTop, options['elemToHide']);
       }
       return lastScrollPos = _scrollTop;
     });
-    downHandler = function(_st) {
+    downHandler = function(_st, el) {
       if ((_st >= currentOffset + options['distanceBeforeHide']) && !isHidden) {
-        if (useJS) {
+        if (options['useJS']) {
           TweenLite.to(options['elemToHide'], options['duration'], {
             top: options['hiddenPos'],
-            easing: Quint.easeOut
+            ease: Quint.easeOut
           });
         }
-        this.addClass("hidden");
+        el.addClass("shy-hidden");
         return isHidden = true;
       } else {
 
       }
     };
-    return upHandler = function(_st) {
+    return upHandler = function(_st, el) {
       if (isHidden) {
-        if (useJS) {
+        if (options['useJS']) {
           TweenLite.to(options['elemToHide'], options['duration'], {
             top: options['visiblePos'],
-            easing: Quint.easeOut
+            ease: Quint.easeOut
           });
         }
         isHidden = false;
-        this.addClass("visible");
+        el.addClass("shy-visible");
       }
       return currentOffset = _st;
     };
