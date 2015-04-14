@@ -13,7 +13,7 @@ $("header").shyHeader();
 
 distanceBeforeHide: (defaults: 250px) **Distance to scroll to hide the element**
 
-distanceBeforeShow : (defaults: 0px) **TODO, not working as of now**
+distanceBeforeShow : (defaults: 0px) **Distance to scroll up to show the element**
 
 elemToHide: (defaults to the targeted element) **Element to hide**
 
