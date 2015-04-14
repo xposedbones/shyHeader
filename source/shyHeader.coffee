@@ -2,7 +2,7 @@
 		@addClass "shyHeader"
 		defaults = 
 			distanceBeforeHide: 250
-			distanceBeforeShow: 0
+			distanceBeforeShow: 50
 			elemToHide: @
 			visiblePos: 0
 			hiddenPos: -@outerHeight()
@@ -17,18 +17,34 @@
 		startingPos = options['elemToHide'].offset().top
 		currentOffset = $(window).scrollTop()
 		lastScrollPos = 0
+		lastScrollPosUp = 0
+		gotScrollPos = false
 		isHidden = false
+		reachedFooter = false
 		if !options['destroy']
 			
 			$(window).on "scroll", (e) ->
-	
+
 				_scrollTop = $(window).scrollTop();
+				_end = $("footer").offset().top - $("header").outerHeight()
 
-				if _scrollTop > lastScrollPos
-					downHandler(_scrollTop, options['elemToHide'])
-
+				if _scrollTop > _end
+					reachedFooter = true
+					$('header').css
+						"position": 'absolute'
+						"top":  _end
 				else
-					upHandler(_scrollTop, options['elemToHide'])
+					if reachedFooter
+						$('header').css
+							"position": 'fixed'
+							"top":  options['hiddenPos']
+						reachedFooter = false
+
+					if _scrollTop > lastScrollPos
+						downHandler(_scrollTop, options['elemToHide'])
+
+					else
+						upHandler(_scrollTop, options['elemToHide'])
 
 				lastScrollPos = _scrollTop
 
@@ -47,13 +63,16 @@
 
 					el.removeClass "shy-visible"
 					el.addClass "shy-hidden"
+					gotScrollPos = false
 					isHidden = true
 				else
 					return 
 
 			upHandler = (_st,el) ->
-				
-				if isHidden
+				if !gotScrollPos
+					gotScrollPos = true
+					lastScrollPosUp = _st
+				if _st <= lastScrollPosUp - options['distanceBeforeShow'] && isHidden
 					if options['useJS']
 						TweenLite.to(
 							options['elemToHide']
@@ -63,6 +82,7 @@
 								ease: Quint.easeOut
 							}
 						)
+					
 					isHidden = false
 					el.removeClass "shy-hidden"
 					el.addClass "shy-visible"
