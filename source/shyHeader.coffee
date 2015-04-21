@@ -7,6 +7,7 @@
 			visiblePos: 0
 			hiddenPos: -@outerHeight()
 			duration: 0.3
+			delay: 500 
 			visibleClass: "visible"
 			hiddenClass: "hidden"
 			useJS: true  #Turns this off to hide the element via css, with the classes provided
@@ -21,32 +22,42 @@
 		gotScrollPos = false
 		isHidden = false
 		reachedFooter = false
-		if !options['destroy']
-			
-			$(window).on "scroll", (e) ->
 
-				_scrollTop = $(window).scrollTop();
-				_end = $("footer").offset().top - $("header").outerHeight()
+		$(window).on "scroll", ->
+			$(window).trigger("shy-scroll")
 
-				if _scrollTop > _end
-					reachedFooter = true
+		scrollHandler = (e) ->
+
+			_scrollTop = $(window).scrollTop();
+			_end = $("footer").offset().top - $("header").outerHeight()
+
+			if _scrollTop > _end
+				reachedFooter = true
+				$('header').css
+					"position": 'absolute'
+					"top":  _end
+			else
+				if reachedFooter
 					$('header').css
-						"position": 'absolute'
-						"top":  _end
+						"position": 'fixed'
+						"top":  options['hiddenPos']
+					reachedFooter = false
+
+				if _scrollTop > lastScrollPos
+					downHandler(_scrollTop, options['elemToHide'])
+
 				else
-					if reachedFooter
-						$('header').css
-							"position": 'fixed'
-							"top":  options['hiddenPos']
-						reachedFooter = false
+					upHandler(_scrollTop, options['elemToHide'])
 
-					if _scrollTop > lastScrollPos
-						downHandler(_scrollTop, options['elemToHide'])
+			lastScrollPos = _scrollTop
+		if !options['destroy']
 
-					else
-						upHandler(_scrollTop, options['elemToHide'])
-
-				lastScrollPos = _scrollTop
+			_debounceTimer = null
+			$(window).on "shy-scroll", ()->
+				clearTimeout(_debounceTimer)
+				setTimeout ()->
+					scrollHandler();
+				, options['delay']
 
 			downHandler = (_st,el) ->
 				
@@ -88,7 +99,7 @@
 					el.addClass "shy-visible"
 				currentOffset = _st
 		else
-
+			$(window).unbind("shy-scroll")
 			@removeClass "shyHeader"
 			@removeClass "shy-visible"
 			@removeClass "shy-hidden"

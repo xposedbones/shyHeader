@@ -21,6 +21,8 @@ visiblePos: (defaults: 0px) **the top position when the element is visible**
 
 hiddenPos: (defaults: - the element's height) **the top position when the element is hidden**
 
+delay: (defaults: 500) **In miliseconds, the delay before a change is triggered (0 = instant). AKA: Debouncing**
+
 duration: (defaults: 0.3) **Duration of the animation *with tweenlite* if the useJS variable is set to true**
 
 visibleClass: (defaults: "visible") **the class added to the element when the element is visible**
