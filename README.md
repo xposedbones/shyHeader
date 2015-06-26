@@ -15,6 +15,14 @@ distanceBeforeHide: (defaults: 250px) **Distance to scroll to hide the element**
 
 distanceBeforeShow : (defaults: 0px) **Distance to scroll up to show the element**
 
+beforeHide: Callback before Hide
+
+afterHide: Callback after Hide
+
+beforeShow: Callback before show
+
+afterShow: Callback after show
+
 elemToHide: (defaults to the targeted element) **Element to hide**
 
 visiblePos: (defaults: 0px) **the top position when the element is visible**

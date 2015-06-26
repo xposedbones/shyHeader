@@ -3,6 +3,10 @@
 		defaults = 
 			distanceBeforeHide: 250
 			distanceBeforeShow: 50
+			beforeHide: ->
+			afterHide: ->
+			beforeShow: ->
+			afterShow: ->
 			elemToHide: @
 			visiblePos: 0
 			hiddenPos: -@outerHeight()
@@ -22,9 +26,6 @@
 		gotScrollPos = false
 		isHidden = false
 		reachedFooter = false
-
-		$(window).on "scroll", ->
-			$(window).trigger("shy-scroll")
 
 		scrollHandler = (e) ->
 
@@ -53,7 +54,7 @@
 		if !options['destroy']
 
 			_debounceTimer = null
-			$(window).on "shy-scroll", ()->
+			$(window).on "scroll", ()->
 				clearTimeout(_debounceTimer)
 				setTimeout ()->
 					scrollHandler();
@@ -62,6 +63,7 @@
 			downHandler = (_st,el) ->
 				
 				if (_st >= currentOffset + options['distanceBeforeHide']) && !isHidden
+					options['beforeHide'].call @
 					if options['useJS']
 						TweenLite.to(
 							options['elemToHide']
@@ -74,6 +76,7 @@
 
 					el.removeClass "shy-visible"
 					el.addClass "shy-hidden"
+					options['afterHide'].call(@) if !options['useJS']
 					gotScrollPos = false
 					isHidden = true
 				else
@@ -83,7 +86,8 @@
 				if !gotScrollPos
 					gotScrollPos = true
 					lastScrollPosUp = _st
-				if _st <= lastScrollPosUp - options['distanceBeforeShow'] && isHidden
+				if (_st <= lastScrollPosUp - options['distanceBeforeShow'] && isHidden) || (_st <= options['distanceBeforeHide'])
+					options['beforeShow'].call @
 					if options['useJS']
 						TweenLite.to(
 							options['elemToHide']
@@ -91,15 +95,20 @@
 							{
 								top: options['visiblePos']
 								ease: Quint.easeOut
+								onComplete: options['afterShow']
 							}
 						)
 					
 					isHidden = false
 					el.removeClass "shy-hidden"
 					el.addClass "shy-visible"
+
+					options['afterShow'].call(@) if !options['useJS']
+
 				currentOffset = _st
 		else
-			$(window).unbind("shy-scroll")
+
+			$(window).off("scroll")
 			@removeClass "shyHeader"
 			@removeClass "shy-visible"
 			@removeClass "shy-hidden"
